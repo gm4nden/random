@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lower Limb Corrective Plan</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --color-text-primary:#1a1a1a;
+  --color-text-secondary:#555;
+  --color-text-tertiary:#999;
+  --color-background-primary:#fff;
+  --color-background-secondary:#f3f3f1;
+  --color-border-tertiary:rgba(0,0,0,0.1);
+  --color-border-secondary:rgba(0,0,0,0.18);
+  --color-background-warning:#fef9ec;
+  --color-border-warning:#f0c040;
+  --color-text-warning:#7a5200;
+  --color-background-info:#eaf3fb;
+  --color-border-info:#7ab8e8;
+  --color-text-info:#0c447c;
+  --border-radius-md:8px;
+  --border-radius-lg:12px;
+  --font-sans:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --color-text-primary:#f0ede8;
+    --color-text-secondary:#a09a92;
+    --color-text-tertiary:#665f58;
+    --color-background-primary:#1e1c1a;
+    --color-background-secondary:#2a2724;
+    --color-border-tertiary:rgba(255,255,255,0.08);
+    --color-border-secondary:rgba(255,255,255,0.15);
+    --color-background-warning:#2a2200;
+    --color-border-warning:#7a5500;
+    --color-text-warning:#f0c060;
+    --color-background-info:#0a1e30;
+    --color-border-info:#1a4a7a;
+    --color-text-info:#85b7eb;
+  }
+}
+body{font-family:var(--font-sans);background:var(--color-background-primary);color:var(--color-text-primary);padding:24px 20px 60px;max-width:680px;margin:0 auto}
+h1{font-size:18px;font-weight:500;margin-bottom:4px}
+.subtitle{font-size:13px;color:var(--color-text-secondary);margin-bottom:1.5rem}
+#llcp{color:var(--color-text-primary)}
+.seg{display:flex;background:var(--color-background-secondary);border-radius:var(--border-radius-lg);padding:3px;gap:2px;margin-bottom:1.5rem}
+.seg-b{flex:1;padding:8px 0;font-size:13px;border:none;border-radius:var(--border-radius-md);background:transparent;color:var(--color-text-secondary);cursor:pointer;text-align:center;transition:all 0.15s}
+.seg-b.on{background:var(--color-background-primary);color:var(--color-text-primary);font-weight:500;border:0.5px solid var(--color-border-secondary)}
+.blk-row{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:1.5rem}
+.blk-t{padding:10px 6px 9px;font-size:12px;text-align:center;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);background:transparent;color:var(--color-text-secondary);cursor:pointer;line-height:1.3;transition:all 0.15s}
+.blk-t .dot{width:6px;height:6px;border-radius:50%;margin:0 auto 5px;background:var(--color-border-secondary)}
+.blk-t.on{font-weight:500}
+.prog-area{margin-bottom:1.25rem}
+.prog-top{display:flex;align-items:baseline;gap:8px;margin-bottom:7px}
+.prog-n{font-size:36px;font-weight:500;line-height:1;letter-spacing:-0.02em}
+.prog-s{font-size:13px;color:var(--color-text-secondary)}
+.prog-reset{margin-left:auto;font-size:12px;padding:4px 12px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:transparent;color:var(--color-text-secondary);cursor:pointer;align-self:center}
+.prog-track{height:3px;background:var(--color-background-secondary);border-radius:2px}
+.prog-fill{height:3px;border-radius:2px;transition:width 0.3s}
+.blk-desc{font-size:12px;color:var(--color-text-tertiary);margin-bottom:1rem;margin-top:-4px}
+.ex-card{display:flex;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);margin-bottom:6px;overflow:hidden;transition:border-color 0.15s}
+.ex-card:not(.locked):hover{border-color:var(--color-border-secondary)}
+.ex-card.locked{opacity:0.35}
+.ex-bar{width:3px;flex-shrink:0}
+.ex-inner{flex:1;min-width:0}
+.ex-hdr{display:flex;align-items:center;gap:10px;padding:11px 13px;cursor:pointer;user-select:none}
+.ex-hdr.flat{cursor:default}
+.ex-cb{width:15px;height:15px;flex-shrink:0;cursor:pointer}
+.ex-nm{font-size:14px;font-weight:500;flex:1;min-width:0;line-height:1.3}
+.ex-nm.done{text-decoration:line-through;color:var(--color-text-tertiary);font-weight:400}
+.ex-pill{font-size:11px;padding:3px 8px;border-radius:var(--border-radius-md);background:var(--color-background-secondary);color:var(--color-text-secondary);white-space:nowrap;flex-shrink:0}
+.ex-lk{font-size:11px;padding:3px 8px;border-radius:var(--border-radius-md);background:var(--color-background-secondary);color:var(--color-text-tertiary);white-space:nowrap}
+.ex-chev{font-size:9px;color:var(--color-text-tertiary);flex-shrink:0;width:12px;text-align:center}
+.ex-body{padding:0 13px 13px 38px}
+.ex-sep{height:0.5px;background:var(--color-border-tertiary);margin:0 13px 12px}
+.dl-row{display:grid;grid-template-columns:68px 1fr;gap:4px 10px;margin-bottom:8px}
+.dl-row:last-child{margin-bottom:0}
+.dl-l{font-size:10px;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;color:var(--color-text-tertiary);padding-top:3px}
+.dl-v{font-size:13px;color:var(--color-text-secondary);line-height:1.55}
+.dl-v ol,.dl-v ul{padding-left:16px;margin-top:2px}.dl-v li{margin-bottom:2px}
+.sc{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);margin-top:1.75rem;overflow:hidden}
+.sc-hdr{display:flex;justify-content:space-between;align-items:center;padding:13px 14px;cursor:pointer;user-select:none}
+.sc-title{font-size:14px;font-weight:500}
+.sc-sub{font-size:12px;color:var(--color-text-tertiary)}
+.sc-body{padding:0 14px 14px}
+.sc-item{display:flex;gap:11px;margin-bottom:12px}
+.sc-num{width:22px;height:22px;flex-shrink:0;border-radius:50%;background:var(--color-background-secondary);font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;color:var(--color-text-secondary);margin-top:1px}
+.sc-right{flex:1}
+.sc-q{font-size:13px;color:var(--color-text-secondary);line-height:1.5;margin-bottom:5px}
+.sc-ta{width:100%;min-height:44px;font-size:13px;padding:7px 10px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);color:var(--color-text-primary);resize:vertical;font-family:var(--font-sans)}
+.note{border-radius:var(--border-radius-lg);padding:12px 14px;margin-top:8px;border:0.5px solid}
+.note-t{font-size:13px;font-weight:500;margin-bottom:4px}
+.note-b{font-size:13px;line-height:1.6;color:var(--color-text-secondary)}
+</style>
+</head>
+<body>
+<h1>Lower limb corrective plan</h1>
+<p class="subtitle">8-week programme — tap an exercise to expand details</p>
+
+<div id="llcp">
+  <div id="wkbar" class="seg"></div>
+  <div id="blkrow" class="blk-row"></div>
+  <div id="blkbody"></div>
+  <div id="scarea"></div>
+  <div id="ftr"></div>
+</div>
+
+<script>
+const KEY='llcp-wdg-v1';
+const WEEKS=['1-2','3-4','5-6','7-8'];
+const BC={
+  daily:{accent:'#1D9E75',bg:'rgba(29,158,117,0.06)',label:'Daily\nfoundation'},
+  strength:{accent:'#7F77DD',bg:'rgba(127,119,221,0.06)',label:'Strength'},
+  gait:{accent:'#EF9F27',bg:'rgba(239,159,39,0.06)',label:'Gait'},
+  gym:{accent:'#378ADD',bg:'rgba(55,138,221,0.06)',label:'Gym rules'}
+};
+const DATA={
+  daily:{desc:'Every day — morning or pre-training',exercises:[
+    {id:'df1',name:'Tripod find + hold',sets:'2 × 30 sec',unlock:'1-2',
+     how:'Stand barefoot. Press equally into three points: center heel, big-toe mound, little-toe mound. Breathe normally.',
+     cue:'Weight equal across all three points — not biased to the outer edge.',
+     why:'Recalibrates where your weight actually sits versus where it should be. Sensory reset before any load.',
+     prog:'Week 3+: eyes closed on both holds.'},
+    {id:'df2',name:'Short foot',sets:'8–10 reps × 8–10 sec / foot',unlock:'1-2',
+     how:'Sitting or standing. Raise the arch by drawing the ball of your foot toward the heel. Toes stay long and relaxed — no curling. Left foot gets an extra set if activation is harder.',
+     cue:'Feel the inside of the arch working — not the toes gripping.',
+     why:'Activates intrinsic foot muscles (abductor hallucis, FDB, quadratus plantae) that support the medial arch. Almost certainly underperforming on the left.',
+     prog:'Week 3+: standing with eyes closed.'},
+    {id:'df3',name:'Posterior tibialis activation',sets:'3 × 12–15 / foot',unlock:'1-2',
+     how:'Sit with foot flat. Press the inside edge (big-toe side) into the ground while resisting any outward roll. Alternative: light band around the forefoot anchored to pull into eversion — resist it. Slow, deliberate contractions.',
+     cue:'Feel the inside of the lower leg and deep arch — not the outer calf.',
+     why:'The single most important muscle for this pattern. Controls tibial rotation and resists lateral loading. Primary medial arch supporter and pronation decelerator.',
+     prog:'Week 5+: add light resistance band.'},
+    {id:'df4',name:'Big toe press + keep the arch',sets:'2 × 10 slow reps / foot',unlock:'1-2',
+     how:'Standing or seated. Other toes relaxed. Press big-toe mound firmly into the floor while maintaining the arch lift from short foot. Hold each press 3–4 sec.',
+     cue:'Arch stays up while the big toe presses down. Not a grip — a press through the mound.',
+     why:'Trains flexor hallucis brevis and the sesamoid mechanism — the system that anchors the big toe during push-off. Your gait currently skips this phase entirely.',
+     prog:'Week 4+: stand on a slight incline to increase demand.'},
+    {id:'df5',name:'Toe yoga',sets:'2 × 8 reps each pattern / foot',unlock:'1-2',
+     how:'Lift big toe while keeping the other four down. Then reverse: lift four toes, keep big toe pressed down. It will be clumsy — that\'s the point.',
+     cue:'Each pattern should feel distinct. If both feel the same, slow down further.',
+     why:'Builds independent neural control of the big toe — required for a clean push-off. Without this isolation the final stance phase can\'t execute properly.',
+     prog:'Should become noticeably easier by week 3–4.'},
+    {id:'df6',name:'Controlled foot rock',sets:'2 × 10 reps / foot',unlock:'1-2',
+     how:'Standing, single foot or bilateral. Slowly rock: outside edge → center → big-toe mound. Don\'t let the arch collapse at the medial end; don\'t jam onto the pinky edge at the lateral end.',
+     cue:'The rock is a transfer drill — rehearsing the weight-shift sequence that should happen in every step.',
+     why:'Bridges the gap between static holds and dynamic walking. Rehearses the lateral-to-medial transfer absent from current gait.',
+     prog:'Week 4+: slow to a 4-count rock in each direction.'},
+    {id:'df7',name:'Split-stance tibial rotation control',sets:'2 × 10 reps / side, 3 sec hold',unlock:'1-2',
+     how:'Left foot forward, small split stance, foot pointing straight. Gently drive the knee inward toward your 2nd/3rd toe. Foot stays flat, arch stays engaged.',
+     cue:'Feel the inside of the shin and deep calf. The foot does not move — only the knee tracks in.',
+     why:'Trains tibial internal rotation over a stable foot — the exact motion absent in midstance. Without active control, the foot compensates by staying externally rotated.',
+     prog:'Week 5+: perform on a balance pad.'},
+    {id:'df8',name:'Corrected single-leg stance',sets:'2 holds / side (30–60 sec), +1 left',unlock:'1-2',
+     how:'Stand on left foot. Before loading: set arch engaged, tripod loaded, foot pointing straighter than habitual. Left side gets a third hold if unstable.',
+     cue:'Set the position before loading it — don\'t try to find it after you\'re already standing.',
+     why:'Teaches the nervous system what a corrected foot position feels like under full body weight. Position-then-load training.',
+     prog:'Week 3+: eyes closed. Week 5+: unstable surface.'}
+  ]},
+  strength:{desc:'3× per week — before your main training',exercises:[
+    {id:'st1',name:'Step-downs — eccentric knee/ankle control',sets:'3 × 8 / side',unlock:'1-2',
+     how:'Low step (10–15 cm). Stand on the edge, lower opposite foot to the floor slowly (3 sec down). Tripod stays. Knee tracks over 2nd/3rd toe. No lateral ankle roll.',
+     cue:'Control the descent — that\'s the work. The knee must not drift out; the ankle must not roll in.',
+     why:'Forces tripod maintenance while decelerating body weight. Eccentric control is where alignment breaks down first — this is where you build it.',
+     prog:'Week 3+: higher step. Week 5+: light dumbbell.'},
+    {id:'st2',name:'Split squat — loaded pattern rewrite',sets:'3 × 8–12 / side',unlock:'1-2',
+     how:'Front foot tripod. Set foot straighter than habitual. As you rise, consciously drive through the big-toe mound.',
+     cue:'The push-off through the big toe on the concentric is the point of this exercise.',
+     why:'Reinforces corrected foot/ankle/knee alignment under load. The big-toe emphasis directly retrains push-off mechanics.',
+     prog:'Week 4+: 3 sec eccentric. Week 5+: increase load progressively.'},
+    {id:'st3',name:'Single-leg RDL — full chain integration',sets:'3 × 8 / side',unlock:'1-2',
+     how:'Tripod on stance foot. Pelvis stays level. Hinge from the hip. Bodyweight first, then light load. If the arch collapses or foot rolls lateral, the weight is too heavy.',
+     cue:'Tripod, level pelvis, neutral spine. The foot is the foundation — if it fails, reset the weight.',
+     why:'Tests foot tripod, ankle stability, knee tracking, hip control, and pelvic stability simultaneously. Highest-demand integration drill in the plan.',
+     prog:'Add load only when all alignment cues hold clean across every rep.'},
+    {id:'st4',name:'Calf raises — push-off retraining',sets:'3 × 12–15',unlock:'1-2',
+     how:'Bilateral first. Rise straight through the 2nd toe. Heel stays stacked — no inward drift. 3 sec up, 4 sec eccentric. Replaces sloppy calf work in your bodybuilding sessions.',
+     cue:'Rise through the center/2nd toe — not the outer edge. If you roll out, reduce the load.',
+     why:'Retrains the calf to produce force through corrected alignment. Slow eccentric builds control where the pattern breaks down.',
+     prog:'Week 3+: single-leg. Week 5+: 2-sec pause at top.'},
+    {id:'st7',name:'Side plank — glute med focus',sets:'2 × 20–45 sec / side, 2–4 days/week',unlock:'1-2',
+     how:'<ol><li>Lie on your side, elbow under shoulder.</li><li>Knees bent (easier) or legs straight (harder).</li><li>Lift hips so your body forms a straight line — shoulder → hip → knee/ankle.</li><li>Keep hips stacked; don\'t let them roll forward.</li></ol>',
+     cue:'Feel the side of your hip and butt working — not your low back. If you feel it in the low back, you\'ve rotated forward.',
+     why:'Directly targets glute medius, which controls pelvic stability during single-leg stance. Weak glute med is a common upstream driver of the lateral foot compensation pattern.',
+     prog:'Week 3+: legs straight. Week 5+: add top-leg raise or band around ankles.'},
+    {id:'st5',name:'Side-lying hip internal rotation',sets:'3 × 15 / side',unlock:'3-4',
+     how:'Lie on your side, knees bent 90°, knees stacked. Rotate the top foot upward (internally rotating the hip) while knees stay together. Slow and controlled.',
+     cue:'Feel deep glute/hip rotator. The knee must not lift — only the foot rotates up.',
+     why:'Symmetrical passive ROM does not guarantee symmetrical active control. During midstance the femur must internally rotate — if the hip can\'t produce this actively, the foot compensates downstream.',
+     prog:'Week 5+: add light ankle weight.'},
+    {id:'st6',name:'Single-leg glute bridge — foot correction integrated',sets:'3 × 10 / side',unlock:'3-4',
+     how:'Set left foot in corrected (straighter) position. Arch engaged, tripod loaded. Drive through the whole foot into hip extension — not just the lateral edge.',
+     cue:'The foot position is the corrective element — the bridge just loads it. Set it before you drive.',
+     why:'Integrates corrected foot position into hip extension, the primary propulsive action in gait. Trains the foot and hip to work together in the pattern that actually occurs during walking.',
+     prog:'Week 6+: add band around knees for hip IR demand.'}
+  ]},
+  gait:{desc:'Daily — barefoot on a safe surface',exercises:[
+    {id:'gt1',name:'Slow walk — single cue practice',sets:'3–5 min / day',unlock:'1-2',
+     how:'Slow walking, barefoot. One cue per session, rotating: (A) "Heel center, not heel outside." (B) "Roll through to the big-toe mound." (C) "Knee tracks forward, not outward." Don\'t force the foot dead-straight.',
+     cue:'One cue only per session. Focus on load distribution, not toe angle.',
+     why:'Every step either reinforces the old pattern or begins to overwrite it. Waiting means hundreds of thousands of steps in the old pattern.',
+     prog:'Week 3+: combine multiple cues in one session.'},
+    {id:'gt2',name:'Combined cue walk',sets:'5–8 min / day',unlock:'3-4',
+     how:'Combine cues: center heel → midfoot → big-toe push-off. Add a few minutes at normal pace with the corrected pattern. It will feel exaggerated. That\'s correct — your "normal" is the problem.',
+     cue:'The sequence: heel center → midfoot load → big-toe push-off. Run through it on every step.',
+     why:'Progresses from single-cue isolation to full gait cycle correction across a longer bout.',
+     prog:'Week 5+: begin applying cues during daily walking, not just practice sessions.'},
+    {id:'gt3',name:'Ambient integration — daily walking',sets:'8–10 min focused + ambient bouts',unlock:'5-6',
+     how:'Apply corrected cues during regular daily walking. Start with 2 min of corrected walking within a normal walk. Gradually extend until the corrected pattern requires less conscious effort.',
+     cue:'Any bouts where the pattern holds without active thought are wins — note them.',
+     why:'The corrective work builds the capacity; ambient integration is where it becomes the new default.',
+     prog:'Benchmark: corrected pattern should feel nearly automatic by weeks 7–8.'}
+  ]},
+  gym:{desc:'Apply every session — always',exercises:[
+    {id:'gm1',name:'Squats, leg press, lunges — tripod standard',sets:'Every rep',unlock:'1-2',
+     how:'Tripod foot, every rep. Knee tracks over 2nd/3rd toe. If the foot rolls lateral: reduce load, reduce depth, or widen stance. Don\'t push through broken alignment.',
+     cue:'Tripod before the descent. Set the foot, then move.',
+     why:'If bodybuilding sessions reinforce the old pattern under heavy load, the corrective work is fighting uphill every session.',
+     prog:''},
+    {id:'gm2',name:'Calf training — corrected form only',sets:'Every set',unlock:'1-2',
+     how:'Follow the standards from the Calf Raises exercise. No separate "bodybuilding calves" with sloppy form. If you roll outward under load, you are literally strength-training the pattern you\'re trying to eliminate.',
+     cue:'Rise through the 2nd toe. If you roll out — drop the weight.',
+     why:'Rolling outward on calf raises directly reinforces the dysfunction. This rule matters as much as the corrective exercises.',
+     prog:''},
+    {id:'gm3',name:'Deadlifts / RDLs — tripod and whole-foot loading',sets:'Every set',unlock:'1-2',
+     how:'Tripod. Weight through whole foot, not lateral edge. Check foot position before every set.',
+     cue:'Before each set: set the tripod, feel the whole foot, then pull.',
+     why:'Deadlifts under heavy load with lateral foot bias directly trains the compensation pattern you\'re trying to eliminate.',
+     prog:''},
+    {id:'gm4',name:'Farmer carries — corrective tool',sets:'2 × 40–60 sec',unlock:'5-6',
+     how:'Carry with tripod focus under load. Both a gym exercise and a corrective drill. Maintains corrected alignment under loaded long-duration walking.',
+     cue:'Feel the tripod under every step during the carry. This is gait training with load.',
+     why:'Extends gait retraining into a higher-demand context and transitions the corrected pattern toward automatic.',
+     prog:''}
+  ]}
+};
+const SC_QS=[
+  'Stand relaxed, look down: is the left foot angle slightly less toe-out than last week?',
+  'Single-leg stance, left foot: can you hold corrected position longer or with less effort?',
+  'Walking feel: does the big-toe push-off happen without conscious effort for any portion of your walk?',
+  'Shoe wear: is the outer heel wear rate visibly slowing compared to earlier? (most relevant week 5+)'
+];
+
+let st={week:'1-2',block:'daily',checks:{'1-2':{},'3-4':{},'5-6':{},'7-8':{}},selfChecks:{'1-2':{},'3-4':{},'5-6':{},'7-8':{}},selfOpen:false,exp:{}};
+
+function esc(s){return s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'):''}
+function wkIdx(w){return WEEKS.indexOf(w)}
+function avail(u){return wkIdx(st.week)>=wkIdx(u)}
+
+function lsGet(){try{const r=localStorage.getItem(KEY);return r?JSON.parse(r):null;}catch(e){return null;}}
+function lsSet(v){try{localStorage.setItem(KEY,JSON.stringify(v));}catch(e){}}
+
+function init(){
+  const s=lsGet();
+  if(s)st={...st,...s,exp:{}};
+  renderAll();
+}
+function save(){
+  const{week,block,checks,selfChecks,selfOpen}=st;
+  lsSet({week,block,checks,selfChecks,selfOpen});
+}
+
+function getProgress(){
+  const exs=DATA[st.block].exercises;
+  const av=exs.filter(e=>avail(e.unlock));
+  const done=av.filter(e=>(st.checks[st.week]||{})[e.id]).length;
+  return{total:av.length,done,pct:av.length>0?Math.round(done/av.length*100):0};
+}
+
+function renderWkBar(){
+  document.getElementById('wkbar').innerHTML=WEEKS.map(w=>`<button class="seg-b${st.week===w?' on':''}" onclick="setWeek('${w}')">Wk ${w}</button>`).join('');
+}
+function renderBlkRow(){
+  document.getElementById('blkrow').innerHTML=Object.keys(BC).map(bid=>{
+    const c=BC[bid];const on=st.block===bid;
+    const style=on?`border-color:${c.accent};background:${c.bg};color:${c.accent}`:'';
+    const dotStyle=`background:${on?c.accent:'var(--color-border-secondary)'}`;
+    return `<button class="blk-t${on?' on':''}" style="${style}" onclick="setBlock('${bid}')"><div class="dot" style="${dotStyle}"></div>${c.label.replace('\n','<br>')}</button>`;
+  }).join('');
+}
+function renderBlkBody(){
+  const{total,done,pct}=getProgress();
+  const c=BC[st.block];const bd=DATA[st.block];
+  const wc=st.checks[st.week]||{};
+  const sorted=[...bd.exercises].sort((a,b)=>(avail(a.unlock)?0:1)-(avail(b.unlock)?0:1));
+  const cards=sorted.map(ex=>{
+    const lk=!avail(ex.unlock);const chk=!!wc[ex.id];const expanded=!!st.exp[ex.id];
+    const hasD=ex.how||ex.cue||ex.why||ex.prog;
+    const detail=hasD&&expanded&&!lk?`<div class="ex-sep"></div><div class="ex-body">
+      ${ex.how?`<div class="dl-row"><div class="dl-l">How</div><div class="dl-v">${ex.how}</div></div>`:''}
+      ${ex.cue?`<div class="dl-row"><div class="dl-l">Cue</div><div class="dl-v">${esc(ex.cue)}</div></div>`:''}
+      ${ex.why?`<div class="dl-row"><div class="dl-l">Why</div><div class="dl-v">${esc(ex.why)}</div></div>`:''}
+      ${ex.prog?`<div class="dl-row"><div class="dl-l">Progress</div><div class="dl-v">${esc(ex.prog)}</div></div>`:''}
+    </div>`:'';
+    const chevron=hasD&&!lk?`<span class="ex-chev">${expanded?'▴':'▾'}</span>`:'';
+    return `<div class="ex-card${lk?' locked':''}">
+      <div class="ex-bar" style="background:${lk?'var(--color-border-tertiary)':c.accent}"></div>
+      <div class="ex-inner">
+        <div class="ex-hdr${(!hasD||lk)?' flat':''}" ${lk?'':hasD?`onclick="toggleExp('${ex.id}')"`:''}>
+          <input type="checkbox" class="ex-cb" style="accent-color:${c.accent}" ${chk?'checked':''} ${lk?'disabled':''} onclick="event.stopPropagation();toggleChk('${ex.id}')">
+          <span class="ex-nm${chk?' done':''}" id="nm_${ex.id}">${esc(ex.name)}</span>
+          ${ex.sets?`<span class="ex-pill">${esc(ex.sets)}</span>`:''}
+          ${lk?`<span class="ex-lk">Wk ${ex.unlock}</span>`:''}
+          ${chevron}
+        </div>${detail}
+      </div>
+    </div>`;
+  }).join('');
+  document.getElementById('blkbody').innerHTML=`
+    <div class="prog-area">
+      <div class="prog-top">
+        <span class="prog-n" style="color:${c.accent}" id="pgn">${pct}%</span>
+        <span class="prog-s" id="pgs">${done} of ${total} done</span>
+        <button class="prog-reset" onclick="resetBlock()">Reset</button>
+      </div>
+      <div class="prog-track"><div class="prog-fill" id="pgf" style="width:${pct}%;background:${c.accent}"></div></div>
+    </div>
+    <div class="blk-desc">${esc(bd.desc)}</div>
+    <div id="exl">${cards}</div>`;
+}
+function renderSC(){
+  const sc=st.selfChecks[st.week]||{};
+  const body=st.selfOpen?`<div class="sc-body">${SC_QS.map((q,i)=>`
+    <div class="sc-item">
+      <div class="sc-num">${i+1}</div>
+      <div class="sc-right">
+        <div class="sc-q">${esc(q)}</div>
+        <textarea class="sc-ta" placeholder="Notes for week ${st.week}…" oninput="saveSC(${i},this.value)">${esc(sc[i]||'')}</textarea>
+      </div>
+    </div>`).join('')}</div>`:'';
+  document.getElementById('scarea').innerHTML=`<div class="sc">
+    <div class="sc-hdr" onclick="toggleSC()">
+      <span class="sc-title">Weekly self-check</span>
+      <div style="display:flex;align-items:center;gap:8px"><span class="sc-sub">Week ${st.week}</span><span style="font-size:9px;color:var(--color-text-tertiary)">${st.selfOpen?'▴':'▾'}</span></div>
+    </div>${body}</div>`;
+}
+function renderFtr(){
+  document.getElementById('ftr').innerHTML=`
+    <div class="note" style="background:var(--color-background-warning);border-color:var(--color-border-warning);margin-top:8px">
+      <div class="note-t" style="color:var(--color-text-warning)">See a specialist if…</div>
+      <div class="note-b">Pain (not discomfort) during any exercise; sharp ankle or knee pain during step-downs or single-leg work; or no measurable improvement in foot position or gait after 6–8 weeks of consistent work.</div>
+    </div>
+    <div class="note" style="background:var(--color-background-info);border-color:var(--color-border-info)">
+      <div class="note-t" style="color:var(--color-text-info)">Ski boot note</div>
+      <div class="note-b">Fix mechanics before fitting. A boot molded around your current pattern locks in the compensation. Get 6–8 weeks of consistent work in first — then bring this plan to the fitter. Foot intrinsic strength and tibial rotation control are directly what ski edging demands.</div>
+    </div>`;
+}
+function renderAll(){renderWkBar();renderBlkRow();renderBlkBody();renderSC();renderFtr();}
+
+function updatePb(){
+  const{total,done,pct}=getProgress();
+  const pgn=document.getElementById('pgn'),pgs=document.getElementById('pgs'),pgf=document.getElementById('pgf');
+  if(pgn)pgn.textContent=pct+'%';if(pgs)pgs.textContent=done+' of '+total+' done';if(pgf)pgf.style.width=pct+'%';
+}
+function setWeek(w){st.week=w;save();renderAll();}
+function setBlock(b){st.block=b;save();renderBlkRow();renderBlkBody();}
+function toggleChk(id){
+  if(!st.checks[st.week])st.checks[st.week]={};
+  st.checks[st.week][id]=!st.checks[st.week][id];save();updatePb();
+  const nm=document.getElementById('nm_'+id);
+  if(nm){st.checks[st.week][id]?nm.classList.add('done'):nm.classList.remove('done');}
+}
+function toggleExp(id){st.exp[id]=!st.exp[id];renderBlkBody();}
+function resetBlock(){
+  if(!st.checks[st.week])st.checks[st.week]={};
+  DATA[st.block].exercises.forEach(e=>{st.checks[st.week][e.id]=false;});save();renderBlkBody();
+}
+function toggleSC(){st.selfOpen=!st.selfOpen;save();renderSC();}
+function saveSC(i,v){
+  if(!st.selfChecks[st.week])st.selfChecks[st.week]={};
+  st.selfChecks[st.week][i]=v;save();
+}
+init();
+</script>
+</body>
+</html>
