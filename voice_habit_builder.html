@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Voice Habit Builder</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#1a1a1a;color:#e8e8e8;padding:1.5rem;max-width:720px;margin:0 auto;}
+:root{
+  --color-background-primary:#2a2a2a;
+  --color-background-secondary:#222222;
+  --color-text-primary:#e8e8e8;
+  --color-text-secondary:#a0a0a0;
+  --color-text-tertiary:#666;
+  --color-border-tertiary:rgba(255,255,255,0.1);
+  --color-border-secondary:rgba(255,255,255,0.18);
+  --color-border-primary:rgba(255,255,255,0.3);
+  --border-radius-md:8px;
+  --border-radius-lg:12px;
+}
+.wrap{padding:1rem 0;}
+.phase-bar{display:flex;gap:0;margin-bottom:1.5rem;border-radius:var(--border-radius-lg);overflow:hidden;border:0.5px solid var(--color-border-tertiary);}
+.phase-tab{flex:1;padding:10px 8px;text-align:center;cursor:pointer;border:none;background:var(--color-background-primary);transition:background 0.15s;color:inherit;}
+.phase-tab.active{background:var(--color-background-secondary);}
+.phase-tab:not(:last-child){border-right:0.5px solid var(--color-border-tertiary);}
+.phase-tab .pt-label{font-size:11px;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:0.05em;}
+.phase-tab .pt-name{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-top:2px;}
+.phase-tab .pt-dur{font-size:11px;color:var(--color-text-secondary);margin-top:1px;}
+.phase-tab.locked .pt-name,.phase-tab.locked .pt-dur{color:var(--color-text-tertiary);}
+.lock-icon{font-size:12px;margin-top:2px;color:var(--color-text-tertiary);}
+.streak-bar{background:var(--color-background-secondary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem;margin-bottom:1.5rem;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.streak-info .streak-num{font-size:24px;font-weight:500;color:var(--color-text-primary);}
+.streak-info .streak-label{font-size:12px;color:var(--color-text-secondary);margin-top:1px;}
+.dots{display:flex;gap:6px;flex-wrap:wrap;}
+.dot{width:28px;height:28px;border-radius:50%;border:0.5px solid var(--color-border-secondary);display:flex;align-items:center;justify-content:center;font-size:10px;cursor:pointer;color:var(--color-text-secondary);background:var(--color-background-primary);transition:all 0.15s;user-select:none;}
+.dot.done{background:#085041;color:#9FE1CB;border-color:#1D9E75;}
+.dot.today{border:1.5px solid #1D9E75;}
+.unlock-notice{background:#085041;border-radius:var(--border-radius-md);padding:10px 14px;margin-bottom:1.25rem;font-size:13px;color:#9FE1CB;display:none;}
+.ex{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem;margin-bottom:10px;}
+.ex.new-in-phase{border-left:3px solid #1D9E75;border-top-left-radius:0;border-bottom-left-radius:0;}
+.ex-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
+.ex-title{font-size:15px;font-weight:500;color:var(--color-text-primary);}
+.ex-badge{font-size:11px;padding:3px 10px;border-radius:20px;white-space:nowrap;flex-shrink:0;}
+.b-blue{background:#042C53;color:#85B7EB;}
+.b-teal{background:#04342C;color:#5DCAA5;}
+.b-purple{background:#26215C;color:#AFA9EC;}
+.b-amber{background:#412402;color:#EF9F27;}
+.new-tag{font-size:10px;background:#085041;color:#9FE1CB;padding:2px 8px;border-radius:20px;margin-left:6px;vertical-align:middle;}
+.ex-desc{font-size:13px;color:var(--color-text-secondary);margin-top:6px;line-height:1.6;}
+.toggle-btn{font-size:12px;color:var(--color-text-secondary);background:none;border:none;cursor:pointer;padding:4px 0;margin-top:4px;}
+.steps-wrap{display:none;margin-top:10px;padding-top:10px;border-top:0.5px solid var(--color-border-tertiary);counter-reset:step;}
+.steps-wrap.open{display:block;}
+.steps-wrap li{font-size:13px;color:var(--color-text-secondary);line-height:1.6;padding:3px 0 3px 22px;position:relative;list-style:none;}
+.steps-wrap li::before{content:counter(step);counter-increment:step;position:absolute;left:0;top:4px;width:16px;height:16px;background:var(--color-background-secondary);border-radius:50%;font-size:10px;font-weight:500;color:var(--color-text-tertiary);display:flex;align-items:center;justify-content:center;}
+.section-lbl{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:0.06em;color:var(--color-text-tertiary);margin:1.25rem 0 8px;}
+.tip{background:var(--color-background-secondary);border-radius:var(--border-radius-md);border-left:3px solid #1D9E75;border-top-left-radius:0;border-bottom-left-radius:0;padding:12px 14px;margin-top:1.25rem;font-size:13px;color:var(--color-text-secondary);line-height:1.6;}
+.tip strong{font-weight:500;color:var(--color-text-primary);}
+.progress-to-unlock{margin-top:1.25rem;font-size:13px;color:var(--color-text-secondary);}
+.progress-track{height:6px;background:var(--color-background-secondary);border-radius:3px;margin-top:6px;overflow:hidden;border:0.5px solid var(--color-border-tertiary);}
+.progress-fill{height:100%;background:#1D9E75;border-radius:3px;transition:width 0.4s;}
+h1{font-size:18px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px;}
+.subtitle{font-size:14px;color:var(--color-text-secondary);margin-bottom:1.5rem;}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Voice habit builder</h1>
+<p class="subtitle">20–30 min/day at full routine · build up gradually · track daily</p>
+
+<div class="streak-bar">
+  <div class="streak-info">
+    <div class="streak-num" id="streakNum">0</div>
+    <div class="streak-label">day streak</div>
+  </div>
+  <div>
+    <div style="font-size:11px;color:var(--color-text-tertiary);margin-bottom:6px;text-align:right;">tap to mark today done</div>
+    <div class="dots" id="dotGrid"></div>
+  </div>
+</div>
+
+<div class="phase-bar">
+  <div class="phase-tab active" id="ptab-1" onclick="switchPhase(1)">
+    <div class="pt-label">Phase 1</div>
+    <div class="pt-name">Foundation</div>
+    <div class="pt-dur">~5 min</div>
+  </div>
+  <div class="phase-tab locked" id="ptab-2" onclick="switchPhase(2)">
+    <div class="pt-label">Phase 2</div>
+    <div class="pt-name">Building</div>
+    <div class="pt-dur">~10–15 min</div>
+    <div class="lock-icon" id="lock2">🔒</div>
+  </div>
+  <div class="phase-tab locked" id="ptab-3" onclick="switchPhase(3)">
+    <div class="pt-label">Phase 3</div>
+    <div class="pt-name">Full routine</div>
+    <div class="pt-dur">~20–30 min</div>
+    <div class="lock-icon" id="lock3">🔒</div>
+  </div>
+</div>
+
+<div id="unlock-notice" class="unlock-notice"></div>
+<div id="phase-content"></div>
+</div>
+
+<script>
+const PHASES = {
+  1: {
+    unlockAt: 0,
+    tip: "<strong>The goal right now is just showing up.</strong> Do these 3 exercises every day until they feel automatic — that's your only job for the first 2 weeks.",
+    sections: [
+      { label: "Warm-up", exercises: [
+        { title: "Diaphragmatic breathing", badge: "10 breaths", bClass: "b-blue", desc: "Builds breath support. The foundation of everything else.", steps: ["Sit or stand tall, one hand on belly, one on chest.", "Inhale through nose for 3–5 sec — belly rises, chest stays still.", "Exhale through pursed lips on an 'S' sound for 4–6 sec.", "Repeat 10 breaths. Try to add 1 count to your exhale each session."] }
+      ]},
+      { label: "Core", exercises: [
+        { title: "Straw phonation", badge: "3–5 min", bClass: "b-teal", desc: "The single highest-impact exercise. Gently massages vocal folds and improves closure.", steps: ["Half-fill a cup with lukewarm water. Use a 6–8 mm straw.", "Submerge tip ~2–3 cm below the surface.", "Hum a comfortable pitch into the straw — aim for steady bubbles.", "Hold 5–10 sec per breath. Continue for 3–5 min total.", "No straw? Hum into cupped hands instead."] },
+        { title: "Pitch glides (sirens)", badge: "5 reps", bClass: "b-teal", desc: "Warms up your range and activates the folds at lower pitches.", steps: ["Use an open vowel ('oo' or 'ee').", "Glide smoothly from a high pitch down to your lowest.", "Then back up — like a siren.", "Never force a creaky sound; stop if your voice cracks."] }
+      ]}
+    ]
+  },
+  2: {
+    unlockAt: 10,
+    tip: "<strong>You've built the habit — now add volume.</strong> New exercises are highlighted in green. If any day feels like too much, it's fine to fall back to phase 1.",
+    sections: [
+      { label: "Warm-up", exercises: [
+        { title: "Diaphragmatic breathing", badge: "10 breaths", bClass: "b-blue", desc: "Builds breath support. The foundation of everything else.", steps: ["Sit or stand tall, one hand on belly, one on chest.", "Inhale through nose for 3–5 sec — belly rises, chest stays still.", "Exhale through pursed lips on an 'S' sound for 4–6 sec.", "Repeat 10 breaths."] },
+        { title: "Yawn-sigh", badge: "5 reps", bClass: "b-blue", isNew: true, desc: "Lowers the larynx and opens the throat before phonation.", steps: ["Open mouth wide and yawn gently.", "At the peak of the yawn, sigh an 'ahhh' vowel.", "Let pitch fall naturally to the bottom of your range.", "Repeat 5 times, then smile lightly to relax."] }
+      ]},
+      { label: "Core", exercises: [
+        { title: "Straw phonation", badge: "5–10 min", bClass: "b-teal", desc: "Now extend to 5–10 min total.", steps: ["Half-fill a cup with lukewarm water. Use a 6–8 mm straw.", "Submerge tip ~2–3 cm below the surface.", "Hum a comfortable pitch — steady bubbles.", "Continue 5–10 min total."] },
+        { title: "Humming / resonant voice drill", badge: "5 reps × 5 sec", bClass: "b-teal", isNew: true, desc: "Forward-focus hum for resonance and efficient phonation.", steps: ["Pick a comfortable mid-range pitch.", "Hum 'mmm' — feel vibration in lips/cheeks, not throat.", "Mouth slightly open; 'MMM' feel not 'NNN'.", "Glide 2–3 semitones up and down.", "5 reps of 5-second hums."] },
+        { title: "Pitch glides (sirens)", badge: "5 reps", bClass: "b-teal", desc: "Warms up your range and activates the folds at lower pitches.", steps: ["Use 'oo' or 'ee'.", "Glide high to low, then back up.", "Stop if voice cracks — never force it."] },
+        { title: "Lip trills (motorboat)", badge: "1–2 min", bClass: "b-teal", isNew: true, desc: "Another SOVT — reduces phonation pressure and encourages a firm onset.", steps: ["Keep lips loose, blow air so they vibrate ('brrr').", "Phonate a tone while trilling on a comfortable medium pitch.", "Glide up and down 3–4 times.", "Continue for 1–2 minutes."] }
+      ]}
+    ]
+  },
+  3: {
+    unlockAt: 20,
+    tip: "<strong>This is the full routine.</strong> You've done the hard part — building the habit. Everything below is the complete programme.",
+    sections: [
+      { label: "Warm-up", exercises: [
+        { title: "Diaphragmatic breathing", badge: "10 breaths × 3", bClass: "b-blue", desc: "Builds breath support.", steps: ["Sit or stand tall, one hand on belly, one on chest.", "Inhale through nose for 3–5 sec — belly rises, chest stays still.", "Exhale through pursed lips on an 'S' sound for 4–6 sec.", "Repeat 10 breaths, 3 times."] },
+        { title: "Yawn-sigh", badge: "5 reps", bClass: "b-blue", desc: "Lowers the larynx and opens the throat.", steps: ["Open mouth wide and yawn gently.", "At the peak, sigh an 'ahhh' vowel.", "Let pitch fall naturally to the bottom of your range.", "Repeat 5 times."] }
+      ]},
+      { label: "Core", exercises: [
+        { title: "Straw phonation", badge: "5–10 min", bClass: "b-teal", desc: "Highest-impact exercise.", steps: ["Half-fill a cup with lukewarm water. Use a 6–8 mm straw.", "Submerge tip ~2–3 cm below surface.", "Hum a comfortable pitch — steady bubbles.", "Continue 5–10 min total."] },
+        { title: "Humming / resonant voice drill", badge: "5 reps × 5 sec · ×2/day", bClass: "b-teal", desc: "Forward-focus hum for resonance.", steps: ["Pick a comfortable mid-range pitch.", "Hum 'mmm' — feel vibration in lips/cheeks.", "Glide 2–3 semitones up and down.", "5 reps of 5-second hums, twice daily."] },
+        { title: "Pitch glides (sirens)", badge: "5 reps · morning & evening", bClass: "b-teal", desc: "Warms up range. Extend the glide lower each session over time.", steps: ["Use 'oo' or 'ee'.", "Glide high to low, then back up.", "Stop if voice cracks — never force it.", "Progression: go a little lower each week."] },
+        { title: "Lip trills (motorboat)", badge: "1–2 min", bClass: "b-teal", desc: "SOVT — reduces phonation pressure.", steps: ["Keep lips loose, blow air so they vibrate ('brrr').", "Phonate a tone while trilling.", "Glide up and down 3–4 times."] },
+        { title: "VFE — Vocal Function Exercises", badge: "×2/day · 3–4 hrs apart", bClass: "b-amber", isNew: true, desc: "Stemple protocol — builds fold strength. Each of 4 exercises done twice per set.", steps: ["Sustain 'eee' on F4 (women) or C3 (men) for 10–15 sec. Forward placement.", "Upward glide on 'OOO' from lowest to highest pitch. ×2.", "Downward glide on 'OOO' from highest to lowest. ×2.", "Sustain C–D–E–F–G (men: C2–G2, women: C4–G4) each for a breath. ×2.", "Always use a soft, clear voice — never yell."] }
+      ]},
+      { label: "Cool-down", exercises: [
+        { title: "Circumlaryngeal massage", badge: "1–2 min", bClass: "b-purple", isNew: true, desc: "Releases neck/throat tension and encourages a lower larynx.", steps: ["Use thumb and forefinger on each side of the Adam's apple.", "Gentle circular kneading for 1–2 min.", "Slide down and massage strap muscles and floor of mouth.", "Be gentle — stop if there is any discomfort."] },
+        { title: "Tongue & jaw stretches", badge: "~2 min", bClass: "b-purple", isNew: true, desc: "Mobilises tongue and jaw for relaxed phonation.", steps: ["10 slow jaw open-close motions (like chewing, no tension).", "Stick tongue out as far as it goes; hold 5 sec. ×3.", "Press tongue tip behind lower front teeth and say 'la-la-la' relaxedly."] },
+        { title: "Pitch prescription (reading aloud)", badge: "~5 min", bClass: "b-purple", isNew: true, desc: "The habit that shifts your habitual speaking pitch over weeks.", steps: ["Read a passage aloud at 1–2 semitones below your normal pitch.", "Keep volume moderate; focus on open vowels.", "Record yourself and compare week to week.", "Track SFF with a voice/tuner app on your phone."] }
+      ]}
+    ]
+  }
+};
+
+let state = JSON.parse(localStorage.getItem('vhb_state') || 'null') || { days: [], currentPhase: 1 };
+function save() { try { localStorage.setItem('vhb_state', JSON.stringify(state)); } catch(e){} }
+
+function todayIndex() {
+  return Math.floor((Date.now() - new Date('2024-01-01').getTime()) / 86400000);
+}
+
+function streakCount() {
+  let s = 0;
+  const today = todayIndex();
+  for (let i = today; i >= 0; i--) {
+    if (state.days.includes(i)) s++; else break;
+  }
+  return s;
+}
+
+function renderDots() {
+  const grid = document.getElementById('dotGrid');
+  grid.innerHTML = '';
+  const today = todayIndex();
+  for (let i = 6; i >= 0; i--) {
+    const idx = today - i;
+    const d = document.createElement('div');
+    const done = state.days.includes(idx);
+    d.className = 'dot' + (done ? ' done' : '') + (i === 0 ? ' today' : '');
+    d.textContent = ['S','M','T','W','T','F','S'][new Date(new Date('2024-01-01').getTime() + idx * 86400000).getDay()];
+    if (i === 0) {
+      d.onclick = () => {
+        if (state.days.includes(idx)) state.days = state.days.filter(x => x !== idx);
+        else state.days.push(idx);
+        save(); checkUnlocks(); renderDots();
+        document.getElementById('streakNum').textContent = streakCount();
+      };
+    }
+    grid.appendChild(d);
+  }
+  document.getElementById('streakNum').textContent = streakCount();
+}
+
+function checkUnlocks() {
+  const total = state.days.length;
+  const notice = document.getElementById('unlock-notice');
+  if (total >= 20 && state.currentPhase < 3) {
+    state.currentPhase = 3; save();
+    notice.style.display = 'block';
+    notice.textContent = '🎉 Phase 3 unlocked — you\'ve built a real habit. The full routine is ready.';
+    setTimeout(() => { notice.style.display = 'none'; }, 5000);
+  } else if (total >= 10 && state.currentPhase < 2) {
+    state.currentPhase = 2; save();
+    notice.style.display = 'block';
+    notice.textContent = '🎉 Phase 2 unlocked — 10 sessions done. Time to add more.';
+    setTimeout(() => { notice.style.display = 'none'; }, 5000);
+  }
+  updatePhaseTabs();
+}
+
+function updatePhaseTabs() {
+  const total = state.days.length;
+  [1,2,3].forEach(p => {
+    const tab = document.getElementById('ptab-'+p);
+    if (total >= PHASES[p].unlockAt) {
+      tab.classList.remove('locked');
+      const lk = document.getElementById('lock'+p);
+      if (lk) lk.style.display = 'none';
+    }
+  });
+}
+
+let activePhase = 1;
+function switchPhase(p) {
+  if (state.days.length < PHASES[p].unlockAt) return;
+  activePhase = p;
+  [1,2,3].forEach(n => document.getElementById('ptab-'+n).classList.toggle('active', n === p));
+  renderPhase(p);
+}
+
+function renderPhase(p) {
+  const data = PHASES[p];
+  const container = document.getElementById('phase-content');
+  let html = '';
+  data.sections.forEach(sec => {
+    html += `<div class="section-lbl">${sec.label}</div>`;
+    sec.exercises.forEach(ex => {
+      const newTag = ex.isNew ? `<span class="new-tag">new</span>` : '';
+      html += `<div class="ex${ex.isNew ? ' new-in-phase' : ''}">
+        <div class="ex-head">
+          <span class="ex-title">${ex.title}${newTag}</span>
+          <span class="ex-badge ${ex.bClass}">${ex.badge}</span>
+        </div>
+        <div class="ex-desc">${ex.desc}</div>
+        <button class="toggle-btn" onclick="toggle(this)">Show steps ↓</button>
+        <div class="steps-wrap"><ol>${ex.steps.map(s=>`<li>${s}</li>`).join('')}</ol></div>
+      </div>`;
+    });
+  });
+  const total = state.days.length;
+  if (p < 3) {
+    const next = PHASES[p+1].unlockAt;
+    const pct = Math.min(100, Math.round((total / next) * 100));
+    html += `<div class="progress-to-unlock">
+      <span>${total}/${next} sessions to unlock phase ${p+1}</span>
+      <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
+    </div>`;
+  }
+  html += `<div class="tip">${data.tip}</div>`;
+  container.innerHTML = html;
+}
+
+function toggle(btn) {
+  const w = btn.nextElementSibling;
+  const open = w.classList.toggle('open');
+  btn.textContent = open ? 'Hide steps ↑' : 'Show steps ↓';
+}
+
+checkUnlocks(); updatePhaseTabs(); renderDots(); renderPhase(1);
+</script>
+</body>
+</html>
