@@ -1,0 +1,193 @@
+<style>
+:root { --teal-mid: #1D9E75; --teal-light: #E1F5EE; --teal-dark: #085041; --amber: #EF9F27; --amber-light: #FAEEDA; --red: #E24B4A; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-sans); }
+.wrap { padding: 1rem 0; }
+.header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 1rem; }
+.header h2 { font-size: 15px; font-weight: 500; color: var(--color-text-primary); letter-spacing: 0.03em; text-transform: uppercase; font-size: 12px; }
+.progress-row { display: flex; align-items: center; gap: 10px; margin-bottom: 1.25rem; }
+.prog-bar-bg { flex: 1; height: 4px; background: var(--color-border-tertiary); border-radius: 2px; }
+.prog-bar { height: 4px; border-radius: 2px; background: var(--teal-mid); transition: width 0.4s ease; }
+.prog-label { font-size: 12px; color: var(--color-text-secondary); min-width: 40px; text-align: right; }
+.phase-tabs { display: flex; gap: 0; margin-bottom: 1.25rem; border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); overflow: hidden; }
+.tab { flex: 1; padding: 8px 12px; font-size: 13px; font-weight: 400; background: transparent; border: none; cursor: pointer; color: var(--color-text-secondary); transition: background 0.15s, color 0.15s; }
+.tab.active { background: var(--color-background-secondary); color: var(--color-text-primary); font-weight: 500; }
+.tab:first-child { border-right: 0.5px solid var(--color-border-tertiary); }
+.phase-badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 20px; margin-bottom: 12px; }
+.badge-warmup { background: var(--amber-light); color: #633806; }
+.badge-work { background: var(--teal-light); color: var(--teal-dark); }
+.ex-list { display: flex; flex-direction: column; gap: 8px; }
+.ex-card { display: flex; align-items: flex-start; gap: 12px; padding: 12px 14px; background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); transition: opacity 0.2s; cursor: pointer; user-select: none; }
+.ex-card.done { opacity: 0.45; }
+.ex-card.done .ex-name { text-decoration: line-through; }
+.check-box { width: 20px; height: 20px; min-width: 20px; border-radius: 50%; border: 1.5px solid var(--color-border-secondary); display: flex; align-items: center; justify-content: center; transition: background 0.15s, border-color 0.15s; margin-top: 1px; }
+.check-box.checked { background: var(--teal-mid); border-color: var(--teal-mid); }
+.check-svg { display: none; }
+.check-box.checked .check-svg { display: block; }
+.ex-body { flex: 1; }
+.ex-name { font-size: 14px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 3px; }
+.ex-meta { font-size: 12px; color: var(--color-text-secondary); }
+.ex-meta span { margin-right: 8px; }
+.timer-btn { margin-top: 8px; padding: 5px 12px; font-size: 12px; font-weight: 500; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: transparent; cursor: pointer; color: var(--color-text-secondary); transition: background 0.15s; }
+.timer-btn:hover { background: var(--color-background-secondary); }
+.timer-btn.running { border-color: var(--red); color: var(--red); }
+.timer-btn.done-timer { border-color: var(--teal-mid); color: var(--teal-mid); background: var(--teal-light); }
+.reset-row { margin-top: 1.25rem; display: flex; justify-content: flex-end; }
+.reset-btn { font-size: 12px; color: var(--color-text-secondary); background: transparent; border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 5px 12px; cursor: pointer; }
+.reset-btn:hover { background: var(--color-background-secondary); }
+.complete-banner { display: none; text-align: center; padding: 16px; background: var(--teal-light); border-radius: var(--border-radius-lg); border: 0.5px solid #9FE1CB; margin-top: 1rem; }
+.complete-banner.show { display: block; }
+.complete-banner p { font-size: 14px; color: var(--teal-dark); font-weight: 500; }
+.complete-banner small { font-size: 12px; color: #0F6E56; }
+</style>
+
+<div class="wrap">
+  <div class="header">
+    <span class="header h2" style="font-size:12px;font-weight:500;color:var(--color-text-secondary);letter-spacing:0.06em;">NECK CORRECTIVE PROTOCOL</span>
+    <span class="prog-label" id="global-count" style="font-size:12px;color:var(--color-text-secondary);">0 / 10</span>
+  </div>
+
+  <div class="progress-row">
+    <div class="prog-bar-bg"><div class="prog-bar" id="prog-bar" style="width:0%"></div></div>
+  </div>
+
+  <div class="phase-tabs">
+    <button class="tab active" id="tab-warmup" onclick="switchTab('warmup')">Warmup <span id="wu-count" style="font-size:11px;color:var(--color-text-secondary)">(0/7)</span></button>
+    <button class="tab" id="tab-work" onclick="switchTab('work')">Work <span id="wk-count" style="font-size:11px;color:var(--color-text-secondary)">(0/3)</span></button>
+  </div>
+
+  <div id="phase-warmup">
+    <div class="ex-list" id="list-warmup"></div>
+  </div>
+  <div id="phase-work" style="display:none">
+    <div class="ex-list" id="list-work"></div>
+  </div>
+
+  <div class="complete-banner" id="complete-banner">
+    <p>Session complete</p>
+    <small>All exercises finished. Good work.</small>
+  </div>
+
+  <div class="reset-row">
+    <button class="reset-btn" onclick="resetAll()">Reset session</button>
+  </div>
+</div>
+
+<script>
+const warmupData = [
+  { id:'w1', name:'Head rotations', reps:'8–10', note:'Alternate direction each rep', timed:false },
+  { id:'w2', name:'Neck curls — on back', reps:'10–12', note:'Slow tempo, full range', timed:false },
+  { id:'w3', name:'Lateral head curls', reps:'10–12 each side', note:'Side to side', timed:false },
+  { id:'w4', name:'Neck curls — on chest', reps:'10–12', note:'Chin tucked, controlled', timed:false },
+  { id:'w5', name:'Side to side stretch', reps:'5 sec hold each side', note:'Gentle static stretch', timed:true, secs:5 },
+  { id:'w6', name:'Alternating chin to shoulder', reps:'10–12', note:'Controlled rotation', timed:false },
+  { id:'w7', name:'Side to side rotation', reps:'20 sec', note:'Isometric hold at end range', timed:true, secs:20 },
+];
+const workData = [
+  { id:'k1', name:'Neck curl — on back', reps:'10–20 reps', note:'Light weight', timed:false },
+  { id:'k2', name:'Neck extension — on chest', reps:'10–20 reps', note:'Light weight', timed:false },
+  { id:'k3', name:'Neck bridges', reps:'10–20 reps', note:'No weight, controlled', timed:false },
+];
+
+const state = {};
+const timers = {};
+
+function buildList(exercises, containerId, badge) {
+  const el = document.getElementById(containerId);
+  el.innerHTML = '';
+  exercises.forEach(ex => {
+    if (!(ex.id in state)) state[ex.id] = false;
+    const card = document.createElement('div');
+    card.className = 'ex-card' + (state[ex.id] ? ' done' : '');
+    card.id = 'card-' + ex.id;
+    card.onclick = (e) => { if (!e.target.classList.contains('timer-btn')) toggleEx(ex.id); };
+
+    const timerHTML = ex.timed ? `<button class="timer-btn" id="tbtn-${ex.id}" onclick="event.stopPropagation();startTimer('${ex.id}',${ex.secs})">${ex.secs}s — start</button>` : '';
+
+    card.innerHTML = `
+      <div class="check-box ${state[ex.id] ? 'checked' : ''}" id="chk-${ex.id}">
+        <svg class="check-svg" width="10" height="8" viewBox="0 0 10 8" fill="none">
+          <path d="M1 3.5L3.8 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="ex-body">
+        <div class="ex-name">${ex.name}</div>
+        <div class="ex-meta"><span>${ex.reps}</span><span style="color:var(--color-border-secondary)">·</span> <span>${ex.note}</span></div>
+        ${timerHTML}
+      </div>`;
+    el.appendChild(card);
+  });
+}
+
+function toggleEx(id) {
+  state[id] = !state[id];
+  const card = document.getElementById('card-' + id);
+  const chk = document.getElementById('chk-' + id);
+  card.classList.toggle('done', state[id]);
+  chk.classList.toggle('checked', state[id]);
+  updateProgress();
+}
+
+let activeTimers = {};
+function startTimer(id, secs) {
+  const btn = document.getElementById('tbtn-' + id);
+  if (activeTimers[id]) {
+    clearInterval(activeTimers[id]);
+    delete activeTimers[id];
+    btn.textContent = secs + 's — start';
+    btn.className = 'timer-btn';
+    return;
+  }
+  let remaining = secs;
+  btn.className = 'timer-btn running';
+  btn.textContent = remaining + 's remaining — tap to stop';
+  activeTimers[id] = setInterval(() => {
+    remaining--;
+    if (remaining <= 0) {
+      clearInterval(activeTimers[id]);
+      delete activeTimers[id];
+      btn.textContent = 'done — tap to reset';
+      btn.className = 'timer-btn done-timer';
+    } else {
+      btn.textContent = remaining + 's remaining — tap to stop';
+    }
+  }, 1000);
+}
+
+function updateProgress() {
+  const all = [...warmupData, ...workData];
+  const done = all.filter(e => state[e.id]).length;
+  const total = all.length;
+  document.getElementById('prog-bar').style.width = Math.round(done/total*100) + '%';
+  document.getElementById('global-count').textContent = done + ' / ' + total;
+
+  const wuDone = warmupData.filter(e => state[e.id]).length;
+  const wkDone = workData.filter(e => state[e.id]).length;
+  document.getElementById('wu-count').textContent = '(' + wuDone + '/7)';
+  document.getElementById('wk-count').textContent = '(' + wkDone + '/3)';
+
+  const banner = document.getElementById('complete-banner');
+  banner.classList.toggle('show', done === total);
+}
+
+function switchTab(phase) {
+  document.getElementById('phase-warmup').style.display = phase === 'warmup' ? '' : 'none';
+  document.getElementById('phase-work').style.display = phase === 'work' ? '' : 'none';
+  document.getElementById('tab-warmup').classList.toggle('active', phase === 'warmup');
+  document.getElementById('tab-work').classList.toggle('active', phase === 'work');
+}
+
+function resetAll() {
+  Object.keys(activeTimers).forEach(id => { clearInterval(activeTimers[id]); });
+  activeTimers = {};
+  [...warmupData, ...workData].forEach(e => { state[e.id] = false; });
+  buildList(warmupData, 'list-warmup', 'warmup');
+  buildList(workData, 'list-work', 'work');
+  updateProgress();
+  document.getElementById('complete-banner').classList.remove('show');
+}
+
+buildList(warmupData, 'list-warmup', 'warmup');
+buildList(workData, 'list-work', 'work');
+updateProgress();
+</script>
